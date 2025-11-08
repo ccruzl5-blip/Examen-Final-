@@ -1,0 +1,47 @@
+@startuml DiagramaNotificacionesSOLID
+
+skinparam packageStyle rectangle
+
+
+package "notificacion" {
+    ' Interfaces (Abstracciones)
+    interface NotificadorEmail {
+        + enviarEmail(destinatario, mensaje)
+    }
+
+    interface NotificadorSMS {
+        + enviarSMS(telefono, mensaje)
+    }
+
+    interface NotificadorPush {
+        + enviarPush(token, mensaje)
+    }
+
+    ' Clases Concretas
+    class EmailNotificador {
+        + enviarEmail(destinatario, mensaje)
+    }
+
+    class SMSNotificador {
+        + enviarSMS(telefono, mensaje)
+    }
+
+    ' Relaciones de Implementación (ISP)
+    EmailNotificador ..|> NotificadorEmail : implementa
+    SMSNotificador ..|> NotificadorSMS : implementa
+}
+
+
+package "servicio" {
+    class ServicioUsuario {
+        - notificador : NotificadorEmail
+        + ServicioUsuario(notificador)
+        + registrarUsuario(nombre, email)
+    }
+}
+
+' Relación de Dependencia (DIP)
+' ServicioUsuario depende de la Abstracción (NotificadorEmail)
+ServicioUsuario --> NotificadorEmail : usa (Inyección de Dependencia)
+
+@enduml
